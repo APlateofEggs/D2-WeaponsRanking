@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>D2 Weapon Database — Aegis Edition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b14;--s1:#121220;--s2:#181828;--s3:#1f1f34;
+  --bd:#28284a;--bd2:#38385a;
+  --tx:#dcdcf0;--mt:#7070a0;--dm:#404068;
+  --gold:#c8a84b;--gdbg:rgba(200,168,75,.1);
+  --aegis:#3ec8a8;--agbg:rgba(62,200,168,.1);
+  --kin:#b8b8cc;--sol:#e47028;--arc:#64c8e8;
+  --void:#a060d8;--sta:#4888d0;--str:#48c060;
+  --leg:#7b5aa6;--exo:#c8a84b;--rare:#4878a8;
+  --tS:#c8a84b;--tA:#4cc46c;--tB:#4a94e0;
+  --tC:#40b8b0;--tD:#e08030;--tE:#d05050;--tF:#903030;--tNR:#585878;
+}
+body{font-family:'Barlow',system-ui,sans-serif;background:var(--bg);color:var(--tx);
+  height:100vh;overflow:hidden;display:flex;flex-direction:column;font-size:13px}
+
+/* ── LOAD ─────────────────────────────────────────────────────────────── */
+#load{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);z-index:50}
+.lc{text-align:center;padding:40px;max-width:440px;width:100%}
+.lhex{font-size:50px;color:var(--gold);line-height:1;margin-bottom:18px;
+  text-shadow:0 0 28px rgba(200,168,75,.35)}
+.lc h1{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;
+  letter-spacing:5px;margin-bottom:6px}
+.lc>p{color:var(--mt);font-weight:300;margin-bottom:30px;font-size:13px}
+.dz{border:1px dashed var(--bd2);border-radius:2px;padding:32px 44px;
+  transition:border-color .2s,background .2s;cursor:pointer}
+.dz:hover,.dz.over{border-color:var(--gold);background:var(--gdbg)}
+.dz p{color:var(--mt);margin-bottom:6px;font-size:12px}
+.dz p:first-child{font-size:14px;color:var(--tx);margin-bottom:10px}
+.btn{display:inline-block;padding:8px 24px;background:var(--gold);color:#09090f;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;
+  cursor:pointer;border-radius:2px;border:none;transition:opacity .15s}
+.btn:hover{opacity:.85}
+.ln{margin-top:16px;font-size:11px;color:var(--dm)}
+
+/* ── MAIN ─────────────────────────────────────────────────────────────── */
+#main{display:none;flex-direction:column;height:100vh;overflow:hidden}
+
+/* ── HEADER ───────────────────────────────────────────────────────────── */
+header{display:flex;align-items:center;gap:14px;height:50px;padding:0 18px;
+  background:var(--s1);border-bottom:1px solid var(--bd);flex-shrink:0}
+.brand{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;
+  letter-spacing:3px;color:var(--gold);flex-shrink:0;display:flex;align-items:center;gap:7px}
+.brand svg{opacity:.85}
+.tabs{display:flex;gap:2px;background:var(--bg);padding:3px;border-radius:2px}
+.tab{background:none;border:none;padding:5px 13px;font-family:'Barlow Condensed',sans-serif;
+  font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  color:var(--mt);cursor:pointer;border-radius:2px;transition:all .15s}
+.tab.on{background:var(--s3);color:var(--tx)}
+#wcount{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  color:var(--dm);flex-shrink:0;letter-spacing:.5px}
+.btn-sm{background:var(--s3);color:var(--mt);padding:5px 11px;font-size:11px;letter-spacing:1.5px}
+.btn-sm:hover{color:var(--tx)}
+
+/* ── FILTERS ──────────────────────────────────────────────────────────── */
+#filters{display:flex;align-items:center;gap:8px;padding:9px 18px;
+  background:var(--s2);border-bottom:1px solid var(--bd);flex-shrink:0;flex-wrap:wrap}
+.fi{background:var(--bg);border:1px solid var(--bd);color:var(--tx);border-radius:2px;
+  font-family:'Barlow',sans-serif;font-size:13px;padding:5px 9px;outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--gold)}
+#fsearch{width:200px}
+select.fi{cursor:pointer;padding-right:26px;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%237070a0'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 8px center}
+select.fi option{background:#181828}
+.rbx{display:flex;gap:3px;margin-left:auto}
+.rbtn{border:1px solid var(--bd);background:none;color:var(--mt);font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:600;letter-spacing:.5px;padding:4px 10px;border-radius:2px;cursor:pointer;transition:all .15s}
+.rbtn[data-r="Legendary"].on{border-color:var(--leg);color:var(--leg);background:rgba(123,90,166,.15)}
+.rbtn[data-r="Exotic"].on{border-color:var(--exo);color:var(--exo);background:rgba(200,168,75,.1)}
+.rbtn[data-r="Rare"].on{border-color:var(--rare);color:var(--rare);background:rgba(72,120,168,.15)}
+
+/* ── BROWSE TABLE ─────────────────────────────────────────────────────── */
+#browse{flex:1;overflow-y:auto}
+table{width:100%;border-collapse:collapse}
+thead th{position:sticky;top:0;background:var(--s1);border-bottom:1px solid var(--bd);
+  padding:8px 12px;text-align:left;font-family:'Barlow Condensed',sans-serif;font-size:10px;
+  font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--mt);
+  white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--tx)}
+thead th.srt{color:var(--gold)}
+tbody tr{border-bottom:1px solid rgba(40,40,74,.5);cursor:pointer;transition:background .08s}
+tbody tr:hover{background:var(--s2)}
+tbody tr.sel{background:var(--s3)}
+td{padding:8px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.cn{font-weight:500;color:var(--tx);max-width:230px}
+.ct{font-family:'Barlow Condensed',sans-serif;color:var(--mt)}
+.ca{font-family:'Barlow Condensed',sans-serif;color:var(--dm);font-size:12px;max-width:150px}
+
+/* Energy */
+.edot{display:inline-flex;align-items:center;gap:5px;
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:500}
+.edot::before{content:'';width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.eKinetic{color:var(--kin)}.eKinetic::before{background:var(--kin)}
+.eSolar{color:var(--sol)}.eSolar::before{background:var(--sol)}
+.eArc{color:var(--arc)}.eArc::before{background:var(--arc)}
+.eVoid{color:var(--void)}.eVoid::before{background:var(--void)}
+.eStasis{color:var(--sta)}.eStasis::before{background:var(--sta)}
+.eStrand{color:var(--str)}.eStrand::before{background:var(--str)}
+
+/* Rarity */
+.rLegendary{color:var(--leg);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600}
+.rExotic{color:var(--exo);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600}
+.rRare{color:var(--rare);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:600}
+
+/* Tier badge — table */
+.tier-cell{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:.5px}
+.tcS{color:var(--tS)}.tcA{color:var(--tA)}.tcB{color:var(--tB)}.tcC{color:var(--tC)}
+.tcD{color:var(--tD)}.tcE{color:var(--tE)}.tcF{color:var(--tF)}.tcNR{color:var(--tNR)}
+
+/* ── MODAL ────────────────────────────────────────────────────────────── */
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10;
+  display:none;backdrop-filter:blur(2px)}
+#modal{position:fixed;top:50%;left:50%;z-index:11;
+  width:min(640px,94vw);max-height:86vh;
+  background:var(--s1);border:1px solid var(--bd2);border-radius:3px;
+  box-shadow:0 28px 70px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);
+  display:flex;flex-direction:column;overflow:hidden;
+  transform:translate(-50%,-50%) scale(.96);opacity:0;
+  transition:transform .22s cubic-bezier(.4,0,.2,1),opacity .22s;
+  pointer-events:none}
+#modal.open{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:all}
+#mclose{position:absolute;top:12px;right:14px;background:none;border:none;
+  color:var(--mt);font-size:17px;cursor:pointer;line-height:1;z-index:2;transition:color .12s}
+#mclose:hover{color:var(--tx)}
+#mcontent{flex:1;overflow-y:auto}
+
+/* Modal hero */
+.mh{padding:20px 20px 16px;border-bottom:1px solid var(--bd);position:relative;padding-right:44px}
+.mh-stripe{position:absolute;top:0;left:0;right:0;height:3px}
+.mh-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.mh-name{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;line-height:1.1;flex:1}
+.tier-badge{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;
+  border:2px solid currentColor;padding:1px 10px;border-radius:2px;flex-shrink:0;
+  display:flex;align-items:center;gap:6px;line-height:1.4}
+.tier-rank{font-size:12px;font-weight:500;opacity:.7;letter-spacing:0}
+.tbS{color:var(--tS)}.tbA{color:var(--tA)}.tbB{color:var(--tB)}.tbC{color:var(--tC)}
+.tbD{color:var(--tD)}.tbE{color:var(--tE)}.tbF{color:var(--tF)}.tbNR{color:var(--tNR)}
+.mh-meta{display:flex;flex-wrap:wrap;gap:5px 12px;align-items:center;
+  font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--mt)}
+.mh-sep{color:var(--dm)}
+.mh-legend{display:flex;gap:14px;margin-top:10px;padding-top:10px;border-top:1px solid rgba(40,40,74,.5)}
+.leg-item{display:flex;align-items:center;gap:5px;font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.leg-aegis{color:var(--aegis)}.leg-dot-aegis{background:var(--aegis)}
+.leg-pick{color:var(--gold)}.leg-dot-pick{background:var(--gold)}
+
+/* Modal sections */
+.ms{padding:11px 20px;border-bottom:1px solid rgba(40,40,74,.4)}
+.ms-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;color:var(--dm);margin-bottom:7px;
+  display:flex;justify-content:space-between;align-items:center}
+.ms-count{font-weight:400;color:var(--dm);letter-spacing:0;font-size:10px}
+.ptags{display:flex;flex-wrap:wrap;gap:4px}
+.ptag{background:var(--s3);border:1px solid var(--bd);color:var(--mt);
+  font-size:12px;padding:3px 8px;border-radius:2px;line-height:1.4;transition:border-color .1s,color .1s}
+.ptag.intr{background:none;border:none;color:var(--tx);font-weight:500;font-size:14px;padding:0}
+.ptag.aegis{border-color:var(--aegis);color:var(--aegis);background:var(--agbg);font-weight:500}
+.ptag.pick{border-color:var(--gold);color:var(--gold);background:var(--gdbg);font-weight:500}
+.ptag.both{border-color:var(--gold);color:var(--gold);background:var(--gdbg);
+  box-shadow:0 0 0 1px var(--aegis) inset;font-weight:500}
+.ptags.trait .ptag:hover{border-color:var(--bd2);color:var(--tx)}
+.ptags.trait .ptag.aegis:hover{border-color:var(--aegis);color:var(--aegis)}
+.ptags.trait .ptag.pick:hover{border-color:var(--gold);color:var(--gold)}
+.more-btn{background:none;border:none;color:var(--mt);font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;letter-spacing:.5px;cursor:pointer;padding:0;transition:color .12s}
+.more-btn:hover{color:var(--tx)}
+.ms-notes{font-size:13px;color:var(--mt);font-weight:300;line-height:1.55;font-style:italic}
+.ms-notes strong{color:var(--aegis);font-style:normal;font-weight:500}
+
+/* ── PERK SEARCH ──────────────────────────────────────────────────────── */
+#perkview{flex:1;overflow-y:auto;display:none;flex-direction:column;padding:20px;gap:14px}
+.pv-top{flex-shrink:0}
+.pv-in{width:100%;font-size:15px;padding:11px 15px}
+.pv-meta{margin-top:8px;font-family:'Barlow Condensed',sans-serif;font-size:11px;
+  color:var(--dm);letter-spacing:.5px;min-height:18px}
+#presults{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));
+  gap:8px;align-content:start}
+.prc{background:var(--s2);border:1px solid var(--bd);border-radius:2px;
+  padding:11px 13px;cursor:pointer;transition:border-color .12s,background .12s;
+  border-left:3px solid transparent}
+.prc:hover{border-color:var(--gold);background:var(--s3)}
+.prc-name{font-weight:500;font-size:13px;margin-bottom:3px}
+.prc-sub{font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--mt);
+  display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.prc-locs{margin-top:5px;display:flex;gap:4px;flex-wrap:wrap}
+.loc-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:.5px;padding:2px 6px;border-radius:2px;background:var(--s3);color:var(--gold)}
+.loc-aegis{color:var(--aegis);background:var(--agbg)}
+.pv-empty{grid-column:1/-1;text-align:center;padding:60px 0;color:var(--dm)}
+.pv-empty strong{display:block;font-family:'Rajdhani',sans-serif;font-size:18px;
+  letter-spacing:2px;color:var(--mt);margin-bottom:8px}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="load">
+  <div class="lc">
+    <div class="lhex">⬡</div>
+    <h1>D2 WEAPON DATABASE</h1>
+    <p>Aegis Edition — Browse weapons, search perks, see god roll recommendations</p>
+    <div class="dz" id="dz">
+      <p>Drop your CSV export here</p>
+      <p>or</p>
+      <label class="btn" for="ff">Choose File</label>
+      <input type="file" id="ff" accept=".csv" style="display:none">
+    </div>
+    <p class="ln">Your file stays on your device — nothing is uploaded</p>
+  </div>
+</div>
+
+<div id="main">
+  <header>
+    <div class="brand">
+      <svg width="17" height="17" viewBox="0 0 17 17"><polygon points="8.5,1 16,4.5 16,12.5 8.5,16 1,12.5 1,4.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      D2 WEAPONS
+    </div>
+    <div class="tabs">
+      <button class="tab on" data-v="browse">Browse</button>
+      <button class="tab" data-v="perk">Perk Search</button>
+    </div>
+    <span id="wcount"></span>
+    <label class="btn btn-sm" for="ff2" title="Load updated CSV">↺ Reload</label>
+    <input type="file" id="ff2" accept=".csv" style="display:none">
+  </header>
+
+  <div id="filters">
+    <input class="fi" id="fsearch" type="text" placeholder="Search weapon name…">
+    <select class="fi" id="ftype"><option value="">All Types</option></select>
+    <select class="fi" id="fenergy"><option value="">All Elements</option></select>
+    <select class="fi" id="fslot"><option value="">All Slots</option></select>
+    <select class="fi" id="ftier"><option value="">All Tiers</option></select>
+    <div class="rbx">
+      <button class="rbtn on" data-r="Legendary">Legendary</button>
+      <button class="rbtn on" data-r="Exotic">Exotic</button>
+      <button class="rbtn" data-r="Rare">Rare</button>
+    </div>
+  </div>
+
+  <div id="browse">
+    <table>
+      <thead><tr>
+        <th data-col="n">Name <span class="sa">↕</span></th>
+        <th data-col="t">Type <span class="sa">↕</span></th>
+        <th data-col="sl">Slot <span class="sa">↕</span></th>
+        <th data-col="e">Element <span class="sa">↕</span></th>
+        <th data-col="r">Rarity <span class="sa">↕</span></th>
+        <th data-col="i">Archetype <span class="sa">↕</span></th>
+        <th data-col="ati">Tier <span class="sa">↕</span></th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div id="perkview">
+    <div class="pv-top">
+      <input class="fi pv-in" id="pinput" type="text" placeholder="Type a perk — e.g. Rampage, Headstone, Reconstruction…">
+      <div class="pv-meta" id="pmeta"></div>
+    </div>
+    <div id="presults"></div>
+  </div>
+</div>
+
+<div id="overlay"></div>
+<div id="modal">
+  <button id="mclose">✕</button>
+  <div id="mcontent"></div>
+</div>
+
+<script>
+const ECOLS={Kinetic:'var(--kin)',Solar:'var(--sol)',Arc:'var(--arc)',
+             Void:'var(--void)',Stasis:'var(--sta)',Strand:'var(--str)'};
+const SLOTSHORT={'Kinetic Weapons':'Kinetic','Energy Weapons':'Energy','Power Weapons':'Power'};
+const TIERORDER={S:0,A:1,B:2,C:3,D:4,E:5,F:6,NR:7,'':8};
+
+let ALL=[], FILT=[], sortCol='n', sortDir=1, activeRar=new Set(['Legendary','Exotic']);
+let expanded={};
+
+const EMBEDDED=[];
+
+function init(data){
+  ALL=data.filter(w=>w.n);
+  buildFilters();
+  applyFilters();
+  document.getElementById('load').style.display='none';
+  document.getElementById('main').style.display='flex';
+}
+
+/* ── CSV parse ─────────────────────────────────────────────────────────── */
+function parseCSV(txt){
+  if(txt.charCodeAt(0)===0xFEFF) txt=txt.slice(1);
+  const lines=txt.split('\n').filter(l=>l.trim());
+  const hdrs=parseRow(lines[0]);
+  const p=s=>(!s||s.trim()==='0')?[]:(s.split('|').map(x=>x.trim()).filter(x=>x&&x!=='0'));
+  const g=(v,k)=>(v[hdrs.indexOf(k)]||'').trim();
+  return lines.slice(1).map(line=>{
+    const v=parseRow(line);
+    return {n:g(v,'Name'),t:g(v,'Type'),sl:g(v,'Slot'),e:g(v,'Energy'),r:g(v,'Rarity'),
+      i:g(v,'Intrinsic'),b:p(g(v,'Barrel / Scope')),m:p(g(v,'Magazine / Battery')),
+      t1:p(g(v,'Trait 1')),t2:p(g(v,'Trait 2')),o:p(g(v,'Origin Trait')),
+      p1:g(v,'My Trait 1 Pick'),p2:g(v,'My Trait 2 Pick'),nt:g(v,'Notes'),
+      ab:p(g(v,'Aegis Barrel')),am:p(g(v,'Aegis Mag')),
+      at1:p(g(v,'Aegis Trait 1')),at2:p(g(v,'Aegis Trait 2')),
+      ano:(g(v,'Aegis Notes')==='0')?'':g(v,'Aegis Notes'),
+      arn:(g(v,'Aegis Rank')==='0')?'':g(v,'Aegis Rank'),
+      ati:g(v,'Aegis Tier')};
+  }).filter(w=>w.n);
+}
+function parseRow(r){
+  const res=[];let cur='',inq=false;
+  for(let i=0;i<r.length;i++){
+    const c=r[i];
+    if(c==='"'){inq=!inq}else if(c===','&&!inq){res.push(cur);cur=''}else cur+=c;
+  }
+  res.push(cur);return res;
+}
+
+/* ── File load ─────────────────────────────────────────────────────────── */
+function loadFile(f){if(!f)return;const rd=new FileReader();
+  rd.onload=e=>{try{init(parseCSV(e.target.result))}catch(err){alert('CSV error: '+err.message)}};
+  rd.readAsText(f);}
+document.getElementById('ff').onchange=e=>loadFile(e.target.files[0]);
+document.getElementById('ff2').onchange=e=>loadFile(e.target.files[0]);
+const dz=document.getElementById('dz');
+dz.ondragover=e=>{e.preventDefault();dz.classList.add('over')};
+dz.ondragleave=()=>dz.classList.remove('over');
+dz.ondrop=e=>{e.preventDefault();dz.classList.remove('over');loadFile(e.dataTransfer.files[0])};
+
+/* ── Filters ───────────────────────────────────────────────────────────── */
+function buildFilters(){
+  const populate=(id,vals,fmt)=>{
+    const el=document.getElementById(id),f=el.options[0].outerHTML;
+    el.innerHTML=f+[...vals].sort().map(v=>`<option value="${v}">${fmt?fmt(v):v}</option>`).join('');
+  };
+  populate('ftype',new Set(ALL.map(w=>w.t)));
+  populate('fenergy',new Set(ALL.map(w=>w.e)));
+  populate('fslot',new Set(ALL.map(w=>w.sl)));
+  // Tier filter in logical order
+  const tiers=['S','A','B','C','D','E','F','NR'].filter(t=>ALL.some(w=>w.ati===t));
+  const el=document.getElementById('ftier');
+  el.innerHTML=el.options[0].outerHTML+tiers.map(t=>`<option value="${t}">Tier ${t}</option>`).join('');
+}
+function applyFilters(){
+  const s=document.getElementById('fsearch').value.toLowerCase();
+  const ft=document.getElementById('ftype').value;
+  const fe=document.getElementById('fenergy').value;
+  const fsl=document.getElementById('fslot').value;
+  const fti=document.getElementById('ftier').value;
+  FILT=ALL.filter(w=>
+    (!s||w.n.toLowerCase().includes(s))&&
+    (!ft||w.t===ft)&&(!fe||w.e===fe)&&(!fsl||w.sl===fsl)&&
+    (!fti||w.ati===fti)&&activeRar.has(w.r));
+  sortRender();
+}
+['fsearch','ftype','fenergy','fslot','ftier'].forEach(id=>
+  document.getElementById(id).addEventListener('input',applyFilters));
+document.querySelectorAll('.rbtn').forEach(b=>b.addEventListener('click',()=>{
+  b.classList.toggle('on');
+  const r=b.dataset.r;activeRar.has(r)?activeRar.delete(r):activeRar.add(r);applyFilters();
+}));
+
+/* ── Sort + render table ───────────────────────────────────────────────── */
+const TIER_SORT_ORDER={S:0,A:1,B:2,C:3,D:4,E:5,F:6,NR:7,'':8};
+function sortRender(){
+  FILT.sort((a,b)=>{
+    let av=a[sortCol]??'', bv=b[sortCol]??'';
+    if(sortCol==='ati'){return sortDir*(TIER_SORT_ORDER[av]??9)-(TIER_SORT_ORDER[bv]??9)}
+    if(sortCol==='arn'){return sortDir*(parseFloat(av)||999)-(parseFloat(bv)||999)}
+    return av<bv?-sortDir:av>bv?sortDir:0;
+  });
+  renderTable();
+  document.getElementById('wcount').textContent=FILT.length.toLocaleString()+' weapons';
+}
+document.querySelectorAll('thead th[data-col]').forEach(th=>th.addEventListener('click',()=>{
+  const col=th.dataset.col;
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+  document.querySelectorAll('thead th').forEach(t=>t.classList.remove('srt'));
+  th.classList.add('srt');
+  th.querySelector('.sa').textContent=sortDir===1?'↑':'↓';
+  sortRender();
+}));
+
+function tierTag(tier,inline){
+  if(!tier)return'';
+  return inline
+    ?`<span class="tier-cell tc${tier}">${tier}</span>`
+    :`<span class="tier-badge tb${tier}">${tier}</span>`;
+}
+function edot(e){return`<span class="edot e${e}">${e}</span>`}
+function rbadge(r){return`<span class="r${r}">${r}</span>`}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function renderTable(){
+  document.getElementById('tbody').innerHTML=FILT.map((w,i)=>
+    `<tr data-i="${i}"${w===activeW?' class="sel"':''}>
+      <td class="cn">${esc(w.n)}</td>
+      <td class="ct">${esc(w.t)}</td>
+      <td class="ct">${SLOTSHORT[w.sl]||w.sl}</td>
+      <td>${edot(w.e)}</td>
+      <td>${rbadge(w.r)}</td>
+      <td class="ca">${esc(w.i)}</td>
+      <td>${tierTag(w.ati,true)}</td>
+    </tr>`).join('');
+  document.querySelectorAll('#tbody tr').forEach(tr=>
+    tr.addEventListener('click',()=>openModal(FILT[+tr.dataset.i],tr)));
+}
+
+/* ── Modal ─────────────────────────────────────────────────────────────── */
+let activeW=null;
+function openModal(w,tr){
+  activeW=w;expanded={};
+  document.querySelectorAll('#tbody tr.sel').forEach(r=>r.classList.remove('sel'));
+  if(tr)tr.classList.add('sel');
+  renderModal(w);
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('overlay').style.display='block';
+}
+function closeModal(){
+  activeW=null;
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('overlay').style.display='none';
+  document.querySelectorAll('#tbody tr.sel').forEach(r=>r.classList.remove('sel'));
+}
+document.getElementById('mclose').onclick=closeModal;
+document.getElementById('overlay').onclick=closeModal;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+function aegisSet(arr){
+  return new Set((arr||[]).map(p=>p.toLowerCase().trim()));
+}
+
+function renderModal(w){
+  const col=ECOLS[w.e]||'var(--mt)';
+  const hasAegis=w.ati||w.at1.length||w.at2.length||w.ano;
+  const hasPick=w.p1||w.p2;
+
+  // Header
+  let tierBadge='';
+  if(w.ati){
+    const rank=w.arn?`<span class="tier-rank">#${esc(w.arn)}</span>`:'';
+    tierBadge=`<span class="tier-badge tb${w.ati}">${esc(w.ati)}${rank}</span>`;
+  }
+  const meta=[w.t,SLOTSHORT[w.sl]||w.sl,edot(w.e),rbadge(w.r)].join('<span class="mh-sep"> · </span>');
+
+  let legend='';
+  if(hasAegis||hasPick){
+    legend='<div class="mh-legend">';
+    if(hasAegis) legend+=`<span class="leg-item leg-aegis"><span class="leg-dot leg-dot-aegis"></span>Aegis Recommendation</span>`;
+    if(hasPick)  legend+=`<span class="leg-item leg-pick"><span class="leg-dot leg-dot-pick"></span>My Pick</span>`;
+    legend+='</div>';
+  }
+
+  let html=`<div class="mh">
+    <div class="mh-stripe" style="background:${col}"></div>
+    <div class="mh-top">
+      <div class="mh-name">${esc(w.n)}</div>
+      ${tierBadge}
+    </div>
+    <div class="mh-meta">${meta}</div>
+    ${legend}
+  </div>`;
+
+  // Perk sections
+  if(w.i)   html+=pSec('ARCHETYPE',  w.i ? [w.i] : [], {cls:'intr'});
+  if(w.b.length) html+=pSec('BARREL / SCOPE',    w.b, {aegis:aegisSet(w.ab),collapsible:true,secKey:'b'});
+  if(w.m.length) html+=pSec('MAGAZINE / BATTERY', w.m, {aegis:aegisSet(w.am),collapsible:true,secKey:'m'});
+  if(w.t1.length)html+=pSec('TRAIT 1',  w.t1, {aegis:aegisSet(w.at1),pick:w.p1,trait:true,secKey:'t1'});
+  if(w.t2.length)html+=pSec('TRAIT 2',  w.t2, {aegis:aegisSet(w.at2),pick:w.p2,trait:true,secKey:'t2'});
+  if(w.o.length) html+=pSec('ORIGIN TRAIT', w.o, {orig:true});
+  if(w.ano) html+=`<div class="ms"><div class="ms-lbl">AEGIS NOTES</div>
+    <div class="ms-notes"><strong>Aegis</strong> — ${esc(w.ano)}</div></div>`;
+
+  document.getElementById('mcontent').innerHTML=html;
+
+  // Wire expand buttons
+  document.querySelectorAll('.more-btn').forEach(b=>b.addEventListener('click',()=>{
+    const k=b.dataset.k;expanded[k]=!expanded[k];renderModal(w);
+  }));
+}
+
+function pSec(label, items, opts={}){
+  const {cls,aegis,pick,trait,orig,collapsible,secKey}=opts;
+  const MAX=8;
+  const isExpanded=secKey?expanded[secKey]:true;
+  const shown=(collapsible&&!isExpanded)?items.slice(0,MAX):items;
+  const extra=collapsible&&!isExpanded&&items.length>MAX?items.length-MAX:0;
+
+  const tags=shown.map(p=>{
+    const pl=p.toLowerCase();
+    const isAegis=aegis&&aegis.has(pl);
+    const isPick=pick&&pl===pick.toLowerCase();
+    let c=cls||'';
+    if(orig) c='orig';
+    else if(isPick&&isAegis) c='both';
+    else if(isAegis) c='aegis';
+    else if(isPick) c='pick';
+    return`<span class="ptag${c?' '+c:''}">${esc(p)}</span>`;
+  }).join('');
+
+  const count=items.length>1?` <span class="ms-count">(${items.length})</span>`:'';
+  let ctrl='';
+  if(collapsible){
+    if(extra>0)  ctrl=`<button class="more-btn" data-k="${secKey}">+ ${extra} more</button>`;
+    else if(items.length>MAX) ctrl=`<button class="more-btn" data-k="${secKey}">Show less</button>`;
+  }
+
+  const tagsClass='ptags'+(trait?' trait':'');
+  return`<div class="ms">
+    <div class="ms-lbl">${label}${count}${ctrl?`<span>${ctrl}</span>`:''}
+    </div>
+    <div class="${tagsClass}">${tags}</div>
+  </div>`;
+}
+
+/* ── Perk search ───────────────────────────────────────────────────────── */
+const pinput=document.getElementById('pinput');
+let pt;
+pinput.addEventListener('input',()=>{clearTimeout(pt);pt=setTimeout(doPerkSearch,200)});
+
+function doPerkSearch(){
+  const q=pinput.value.trim().toLowerCase();
+  const res=document.getElementById('presults');
+  const meta=document.getElementById('pmeta');
+  if(!q){res.innerHTML='';meta.textContent='';return}
+
+  const hits=[];
+  ALL.filter(w=>activeRar.has(w.r)).forEach(w=>{
+    const locs=[];
+    const checkAegis=(arr,label)=>arr.some(p=>p.toLowerCase().includes(q))?[{label,aegis:true}]:[];
+    const inT1=w.t1.some(p=>p.toLowerCase().includes(q));
+    const inT2=w.t2.some(p=>p.toLowerCase().includes(q));
+    const inT1a=w.at1.some(p=>p.toLowerCase().includes(q));
+    const inT2a=w.at2.some(p=>p.toLowerCase().includes(q));
+    const inOr=w.o.some(p=>p.toLowerCase().includes(q));
+    if(inT1)  locs.push({label:'TRAIT 1', aegis:inT1a});
+    if(inT2)  locs.push({label:'TRAIT 2', aegis:inT2a});
+    if(inOr)  locs.push({label:'ORIGIN',  aegis:false});
+    if(locs.length) hits.push({w,locs});
+  });
+
+  meta.textContent=hits.length
+    ?`${hits.length} weapon${hits.length===1?'':'s'} can roll this perk`:'';
+
+  if(!hits.length){
+    res.innerHTML=`<div class="pv-empty"><strong>NO MATCHES</strong>No weapons found with "${esc(q)}" in their perk pool</div>`;
+    return;
+  }
+
+  res.innerHTML=hits.map((h,i)=>`
+    <div class="prc" data-pi="${i}">
+      <div class="prc-name">${esc(h.w.n)}</div>
+      <div class="prc-sub">
+        ${edot(h.w.e)}<span style="color:var(--dm)">·</span>
+        ${esc(h.w.t)}<span style="color:var(--dm)">·</span>
+        ${rbadge(h.w.r)}
+        ${h.w.ati?`<span style="color:var(--dm)">·</span>${tierTag(h.w.ati,true)}`:''}
+      </div>
+      <div class="prc-locs">${h.locs.map(l=>
+        `<span class="loc-tag${l.aegis?' loc-aegis':''}">${l.label}${l.aegis?' ★':''}</span>`
+      ).join('')}</div>
+    </div>`).join('');
+  document.querySelectorAll('.prc').forEach(c=>
+    c.addEventListener('click',()=>openModal(hits[+c.dataset.pi].w,null)));
+}
+
+/* ── View toggle ───────────────────────────────────────────────────────── */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');
+  const v=t.dataset.v;
+  document.getElementById('browse').style.display   =v==='browse'?'block':'none';
+  document.getElementById('filters').style.display  =v==='browse'?'flex':'none';
+  document.getElementById('perkview').style.display =v==='perk'?'flex':'none';
+  if(v==='perk'){document.getElementById('pinput').focus();closeModal();}
+}));
+
+/* ── Boot ──────────────────────────────────────────────────────────────── */
+if(EMBEDDED&&EMBEDDED.length) init(EMBEDDED);
+</script>
+</body>
+</html>

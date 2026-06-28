@@ -1,0 +1,19 @@
+# User configuration — contains your API key, never commit this
+config.py
+
+# Generated output files
+*.csv
+
+# Bungie manifest cache — 100MB+, regenerated automatically
+manifest.content
+manifest_version.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# OS clutter
+.DS_Store
+Thumbs.db
