@@ -19,6 +19,10 @@ A two-part tool for Destiny 2 players: a Python script that pulls every active L
 * AegisRelic recommendation highlighting (teal = recommended perk, gold = user personal pick if they choose to edit the csv)
 * Tier badge (S/A/B/C/D/E/F) if ranking data is present in your CSV
 * Perk search — type any perk name and see every weapon that can roll it, with a ★ if it's also an AegisRelic-recommended roll
+<img width="2557" height="943" alt="Screenshot 2026-06-28 152733" src="https://github.com/user-attachments/assets/eda32243-6087-4985-8ff3-382e61470bf2" />
+<img width="2552" height="1304" alt="Screenshot 2026-06-28 152754" src="https://github.com/user-attachments/assets/e0329b3a-e1ce-4409-aeee-981283984bca" />
+<img width="2558" height="1300" alt="Screenshot 2026-06-28 152819" src="https://github.com/user-attachments/assets/6b165f07-0f3e-40b9-b5f2-2319d2eadca9" />
+
 
 \---
 
